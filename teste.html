@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exemplo de Socket.IO</title>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Exemplo de Socket.IO</h1>
+    <button onclick="connect()">Conectar</button>
+    <button onclick="disconnect()">Desconectar</button>
+    <ul id="messages"></ul>
+
+    <script>
+        var socket;
+
+        function connect() {
+            // Conecta ao servidor Socket.IO
+            socket = io("http://192.168.0.37:3000", {
+                transports: ["websocket"]
+            });
+
+            // Define um callback para quando a conexão for estabelecida
+            socket.on("connect", () => {
+                console.log("Conectado ao servidor Socket.IO");
+            });
+
+            // Define um callback para quando uma mensagem for recebida do servidor
+            socket.on("message", (data) => {
+                console.log("Mensagem recebida:", data);
+                var li = document.createElement("li");
+                li.textContent = data;
+                document.getElementById("messages").appendChild(li);
+            });
+
+            // Define um callback para quando a conexão for fechada
+            socket.on("disconnect", () => {
+                console.log("Conexão fechada");
+            });
+        }
+
+        function disconnect() {
+            // Fecha a conexão Socket.IO
+            if (socket) {
+                socket.close();
+            }
+        }
+
+        function sendMessage() {
+            // Envia uma mensagem para o servidor
+            var message = prompt("Digite uma mensagem:");
+            socket.emit("message", message);
+        }
+    </script>
+</body>
+</html>
